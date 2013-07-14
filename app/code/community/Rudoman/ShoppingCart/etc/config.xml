@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    Rudoman
+ * @package     Rudoman_ShoppingCart
+ * @author      Evgenia Rudoman (evgenia.rudoman@gmail.com)
+ */
+-->
+<config>
+    <modules>
+        <Rudoman_ShoppingCart>
+            <version>0.1.0</version>
+        </Rudoman_ShoppingCart>
+    </modules>
+    <global>
+        <blocks>
+            <checkout>
+                <rewrite>
+                    <cart>Rudoman_ShoppingCart_Block_Checkout_Cart</cart>
+                </rewrite>
+            </checkout>
+        </blocks>
+    </global>
+    <frontend>
+        <layout>
+            <updates>
+                <shoppingcart>
+                    <file>shoppingcart.xml</file>
+                </shoppingcart>
+            </updates>
+        </layout>
+    </frontend>
+</config>

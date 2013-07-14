@@ -1,0 +1,166 @@
+<?php
+/**
+ * @category    Rudoman
+ * @package     Rudoman_ShoppingCart
+ * @author      Evgenia Rudoman (evgenia.rudoman@gmail.com)
+ */
+?>
+
+<script type="text/javascript">
+    //$.noConflict();
+    jQuery(document).ready(function($){
+        $('.cartBox .animateCart').click(function(){
+            var showCartLink = $('.cartBox .showCart');
+            var hideCartLink = $('.cartBox .hideCart');
+            
+            $('.cartBox .movingCart').animate({
+                opacity: 1,
+                height: 'toggle'
+            }, 1000, function() {
+                if (showCartLink.is(':hidden'))
+                {
+                    hideCartLink.hide();
+                    showCartLink.show();
+                }
+                else if (hideCartLink.is(':hidden'))
+                {
+                    showCartLink.hide();
+                    hideCartLink.show();
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+<div class="cartBox">
+    <?php $items = $this->getItems() ?>
+    <?php if ($items): ?>
+        <div class="movingCart">
+            <?php echo $this->getChildHtml('form_before') ?>
+            <form action="<?php echo $this->getUrl('checkout/cart/updatePost') ?>" method="post">
+                <fieldset>
+                    <table id="shopping-cart-table" class="data-table cart-table">
+                        <col width="1" />
+                        <col />
+                        <col width="1" />
+                        <?php if ($this->helper('wishlist')->isAllowInCart()) : ?>
+                            <col width="1" />
+                        <?php endif ?>
+                        <col width="1" />
+                        <col width="1" />
+
+                        <?php $mergedCells = ($this->helper('tax')->displayCartBothPrices() ? 2 : 1); ?>
+                        <thead>
+                            <tr>
+                                <th rowspan="<?php echo $mergedCells; ?>" width="75">&nbsp;</th>
+                                <th rowspan="<?php echo $mergedCells; ?>" width="107"><span class="nobr"><?php echo $this->__('Product Name') ?></span></th>
+                                <?php if ($this->helper('wishlist')->isAllowInCart()) : ?>
+                                    <th rowspan="<?php echo $mergedCells; ?>" class="a-center"><span class="nobr"><?php echo $this->__('Move to Wishlist') ?></span></th>
+                                <?php endif ?>
+                                <th rowspan="<?php echo $mergedCells; ?>" class="a-center" width="41"><?php echo $this->__('Qty') ?></th>
+                                <th class="a-center" colspan="<?php echo $mergedCells; ?>" width="61"><?php echo $this->__('Subtotal') ?></th>
+                                <th class="a-center" colspan="<?php echo $mergedCells; ?>"></th>
+                            </tr>
+                            <?php if ($this->helper('tax')->displayCartBothPrices()): ?>
+                                <tr>
+                                    <th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+                                    <th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
+                                    <th class="a-right"><?php echo $this->helper('tax')->getIncExcTaxLabel(false) ?></th>
+                                    <th><?php echo $this->helper('tax')->getIncExcTaxLabel(true) ?></th>
+                                </tr>
+                            <?php endif; ?>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($items as $item): ?>
+                                <tr>
+                                    <td><img src="<?php echo $this->helper('catalog/image')->init($item->getProduct(), 'thumbnail')->resize(70) ?>" /></td>
+                                    <td width="123"><a href="<?php echo $this->helper('catalog/product')->getProductUrl($item->getProduct()) ?>"><?php echo $item->getProduct()->getName() ?></a></td>
+                                    <td class="a-center">
+                                        <input name="cart[<?php echo $item->getId() ?>][qty]" value="<?php echo $item->getQty() * 1 ?>" size="4" title="<?php echo $this->__('Qty') ?>" class="input-text qty" maxlength="12" />
+                                    </td>
+                                    <td><?php echo $this->helper('checkout')->formatPrice($item->getBaseRowTotal()) ?></td>
+                                    <td class="a-center">
+                                        <a href="<?php echo $this->getRemoveUrl($item->getId()) ?>" title="<?php echo $this->__('Remove item') ?>" class="btn-remove btn-remove2"><?php echo $this->__('Remove item') ?></a>
+                                        <a href="<?php echo $this->getConfigureUrl($item->getId()) ?>" title="<?php echo $this->__('Edit item parameters') ?>" class="editItem"><?php echo $this->__('edit') ?></a>
+                                    </td>
+                                </tr>
+                            <?php endforeach ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="50" class="a-right">
+                                    <div class="buttonBox">
+                                        <button type="submit" name="update_cart_action" value="update_qty" title="<?php echo $this->__('Update Shopping Cart'); ?>" class="button btn-update"><span><span><?php echo $this->__('Update'); ?></span></span></button>
+                                        <button type="submit" name="update_cart_action" value="empty_cart" title="<?php echo $this->__('Clear Shopping Cart'); ?>" class="button btn-empty" id="empty_cart_button"><span><span><?php echo $this->__('Clear'); ?></span></span></button>
+                                    </div>
+                                    <button type="button" title="<?php echo $this->__('Proceed to Checkout') ?>" class="button btn-proceed-checkout btn-checkout" onclick="window.location='<?php echo $this->getUrl('checkout/onepage', array('_secure' => true)); ?>';"><span><?php echo $this->__('Checkout') ?></span></button>
+                                    <!--[if lt IE 8]>
+                                    <input type="hidden" id="update_cart_action_container" />
+                                    <script type="text/javascript">
+                                    //<![CDATA[
+                                        Event.observe(window, 'load', function()
+                                        {
+                                            // Internet Explorer (lt 8) does not support value attribute in button elements
+                                            $emptyCartButton = $('empty_cart_button');
+                                            $cartActionContainer = $('update_cart_action_container');
+                                            if ($emptyCartButton && $cartActionContainer) {
+                                                Event.observe($emptyCartButton, 'click', function()
+                                                {
+                                                    $emptyCartButton.setAttribute('name', 'update_cart_action_temp');
+                                                    $cartActionContainer.setAttribute('name', 'update_cart_action');
+                                                    $cartActionContainer.setValue('empty_cart');
+                                                });
+                                            }
+        
+                                        });
+                                    //]]>
+                                    </script>
+                                    <![endif]-->
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <script type="text/javascript">decorateTable('shopping-cart-table')</script>
+                </fieldset>
+            </form>
+            <div class="cart-collaterals">
+                <div class="col2-set">
+                    <div class="col-1">
+                        <?php echo $this->getChildHtml('crosssell') ?>
+                    </div>
+                    <div class="col-2">
+                        <?php /* Extensions placeholder */ ?>
+                        <?php echo $this->getChildHtml('checkout.cart.extra') ?>
+                        <?php echo $this->getChildHtml('coupon') ?>
+                        <?php if (!$this->getIsVirtual()): echo $this->getChildHtml('shipping');
+                        endif; ?>
+                    </div>
+                </div>
+                <div class="totals floatRight">
+                    <?php echo $this->getChildHtml('totals'); ?>
+                    <?php if (!$this->hasError()): ?>
+                        <ul class="checkout-types">
+                            <?php foreach ($this->getMethods('methods') as $method): ?>
+                                <?php if ($methodHtml = $this->getMethodHtml($method)): ?>
+                                    <li><?php echo $methodHtml; ?></li>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+    <div class="box-cart">
+        <span class="qtyProduct">
+            <a href="<?php echo $this->getUrl('checkout/cart') ?>"></a>
+            <?php echo $this->getItemsQty() ?>
+        </span>
+        <?php if ($items): ?>
+            <a href="#" class="floatRight animateCart showCart">&#9650;<span class="textAlignRight"><?php echo $this->__('show cart') ?></span></a>
+            <a href="#" class="floatRight animateCart hideCart">&#9660;<span class="textAlignRight"><?php echo $this->__('hide cart') ?></span></a>
+        <?php endif; ?>
+        <span class="baseGrandTotal"><?php echo $this->__('Subtotal: ') . $this->helper('checkout')->formatPrice($this->getQuote()->getBaseGrandTotal()) ?></span>
+    </div>
+</div>

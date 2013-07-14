@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    Rudoman
+ * @package     Rudoman_ShoppingCart
+ * @author      Evgenia Rudoman (evgenia.rudoman@gmail.com)
+ */
+-->
+<config>
+    <modules>
+        <Rudoman_ShoppingCart>
+            <active>true</active>
+            <codePool>community</codePool>
+        </Rudoman_ShoppingCart>
+    </modules>
+</config>

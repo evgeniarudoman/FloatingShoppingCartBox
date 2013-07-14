@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category    Rudoman
+ * @package     Rudoman_ShoppingCart
+ * @author      Evgenia Rudoman (evgenia.rudoman@gmail.com)
+ */
+-->
+<layout version="0.1.0">
+    <default translate="label" module="page">
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>js/jquery/jquery-1.9.1.min.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>css/cartBox.css</name>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="checkout/cart" name="shoppingCart" template="shoppingCart/cart.phtml" >
+                <block type="checkout/cart_totals" name="checkout.cart.totals" as="totals" template="checkout/cart/totals.phtml"/>
+                <action method="addItemRender"><type>simple</type><block>checkout/cart_item_renderer</block><template>checkout/cart/item/default.phtml</template></action>
+            </block>
+        </reference>
+    </default>
+</layout>
